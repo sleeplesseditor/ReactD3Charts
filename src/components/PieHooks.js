@@ -3,6 +3,7 @@ import * as d3 from "d3";
 
 const PieHooks = props => {
   const ref = useRef(null);
+  const cache = useRef(props.data);
   const createPie = d3
     .pie()
     .value(d => d.value)
@@ -17,6 +18,7 @@ const PieHooks = props => {
   useEffect(
     () => {
       const data = createPie(props.data);
+      const prevData = createPie(cache.current);
       const group = d3.select(ref.current);
       const groupWithData = group.selectAll("g.arc").data(data);
 
@@ -31,10 +33,17 @@ const PieHooks = props => {
         .append("path")
         .merge(groupWithData.select("path.arc"));
 
+      const arcTween = (d, i) => {
+        const interpolator = d3.interpolate(prevData[i], d);
+
+        return t => createArc(interpolator(t));
+      };
+
       path
         .attr("class", "arc")
-        .attr("d", createArc)
-        .attr("fill", (d, i) => colors(i));
+        .attr("fill", (d, i) => colors(i))
+        .transition()
+        .attrTween("d", arcTween);
 
       const text = groupWithUpdate
         .append("text")
@@ -43,10 +52,17 @@ const PieHooks = props => {
       text
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
-        .attr("transform", d => `translate(${createArc.centroid(d)})`)
         .style("fill", "white")
         .style("font-size", 10)
-        .text(d => format(d.value));
+        .style("z-index", 999)
+        .transition()
+        .attr("transform", d => `translate(${createArc.centroid(d)})`)
+        .tween('text', (d , i, nodes) => {
+          const interpolator = d3.interpolate(prevData[i], d);
+
+          return t => d3.select(nodes[i]).text(format(interpolator(t).value));
+        });
+      cache.current = props.data;
     },
     [props.data, colors, createArc, createPie, format]
   );

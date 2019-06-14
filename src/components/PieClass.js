@@ -82,7 +82,7 @@ class PieClass extends Component {
       .attr("text-anchor", "middle")
       .attr("alignment-baseline", "middle")
       .attr("transform", d => `translate(${this.createArc.centroid(d)})`)
-      .text(d => this.format(d.value));
+      .text(d => this.format(d.value + '%'));
   }
 
   render() {

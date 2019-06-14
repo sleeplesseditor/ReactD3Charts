@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles.css';
 import * as d3 from 'd3';
 import Navbar from './components/Navbar';
@@ -17,6 +17,13 @@ function App() {
   const changeData = () => {
     setData(generateData());
   };
+
+  useEffect(
+    () => {
+      setData(generateData());
+    },
+    [!data]
+  );
 
   return (
     <div>
