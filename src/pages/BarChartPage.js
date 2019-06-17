@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import * as d3 from 'd3';
 import AnimatedBar from '../components/BarHooks';
 import BarSVG from '../components/BarSVG';
@@ -29,24 +29,24 @@ function BarChartPage() {
         </button>
       </div>
       <div className="chart-container">
-        {/* <div className="chart-content-container">
-          <span className="label">Pie Hooks</span>
+        <div className="chart-content-container">
+          <span className="label">Bar Hooks</span>
             <AnimatedBar
                 data={data}
-                width={300}
-                height={200}
+                width={400}
+                height={300}
                 top={20}
                 bottom={30}
                 left={30}
                 right={0}
             />
-        </div> */}
+        </div>
         <div className="chart-content-container">
           <span className="label">SVG Elements</span>
             <BarSVG
                 data={data}
-                width={300}
-                height={200}
+                width={400}
+                height={300}
                 top={20}
                 bottom={30}
                 left={30}

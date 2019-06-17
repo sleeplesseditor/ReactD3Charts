@@ -20,7 +20,7 @@ function PieChartPage() {
     () => {
       setData(generateData());
     },
-    [!data]
+    []
   );
 
   return (

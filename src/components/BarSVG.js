@@ -80,7 +80,7 @@ const BarSVG = props => {
             setSort(!sort);
             }}
         >
-            Toggle sort
+            Toggle Sort
         </button>
     </div>
 

@@ -1,18 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { animated, useSpring } from "react-spring";
+import { animated, Spring } from "react-spring";
 import * as d3 from "d3";
 
 const colors = d3.scaleOrdinal(d3.schemeCategory10);
 const format = d3.format(".2f");
-const animationDuration = 150;
-const animationConfig = {
-  to: async (next, cancel) => {
-    await next({ t: 1 });
-  },
-  from: { t: 0 },
-  config: { duration: animationDuration },
-  reset: true
-};
 
 const XAxis = ({ top, bottom, left, right, height, scale }) => {
   const axis = useRef(null);
@@ -20,7 +11,6 @@ const XAxis = ({ top, bottom, left, right, height, scale }) => {
   useEffect(() => {
     d3.select(axis.current)
       .transition()
-      .duration(animationDuration)
       .call(d3.axisBottom(scale));
   });
 
@@ -39,7 +29,6 @@ const YAxis = ({ top, bottom, left, right, scale }) => {
   useEffect(() => {
     d3.select(axis.current)
       .transition()
-      .duration(animationDuration)
       .call(d3.axisLeft(scale));
   });
 
@@ -48,10 +37,20 @@ const YAxis = ({ top, bottom, left, right, scale }) => {
   );
 };
 
-const Rect = ({ index, data, prev, next, x, y, height, top, bottom, sort }) => {
-  const [animatedProps, setAnimatedProps] = useSpring(() => animationConfig);
-  setAnimatedProps(animationConfig);
-
+const Rect = ({
+  index,
+  data,
+  prev,
+  next,
+  x,
+  y,
+  height,
+  top,
+  bottom,
+  animatedProps,
+  sort
+}) => {
+  console.log(prev[index], data);
   const prevIndex = prev.findIndex(d => d.index === next[index].index);
   const interpolator = d3.interpolate(prev[index], data);
   const shouldUpdate =
@@ -71,7 +70,7 @@ const Rect = ({ index, data, prev, next, x, y, height, top, bottom, sort }) => {
 
   return (
     <animated.g
-      key={data.index}
+      key={index}
       transform={animatedProps.t.interpolate(t => {
         return `translate(${interpolatorX(t)}, ${interpolatorY(t)})`;
       })}
@@ -101,11 +100,11 @@ const Rect = ({ index, data, prev, next, x, y, height, top, bottom, sort }) => {
 const Bar = props => {
   const cache = useRef(props.data);
   const data = useRef(props.data);
-  var [sort, setSort] = useState(() => {
+  const [sort, setSort] = useState(() => {
     cache.current = props.data;
     return sort ? !sort : false;
   });
-  
+
   data.current = sort
     ? [...props.data].sort((a, b) => b.value - a.value)
     : [...props.data];
@@ -122,21 +121,19 @@ const Bar = props => {
     .domain([0, d3.max(data.current, d => d.value)]);
 
   useEffect(() => {
+    console.log("userEffect");
     cache.current = data.current;
   });
 
   return (
     <>
-      <div className="chart-container">
-        <button
-            className="toggle-button"
-            onClick={() => {
-            setSort(!sort);
-            }}
-        >
-            Toggle Sort
-        </button>
-    </div>
+      <button
+        onClick={() => {
+          setSort(!sort);
+        }}
+      >
+        Toggle sort
+      </button>
       <svg width={props.width} height={props.height}>
         <XAxis
           scale={x}
@@ -154,21 +151,26 @@ const Bar = props => {
           right={props.right}
         />
         <g transform={`translate(${props.left}, ${props.top})`}>
-          {props.data.map((d, i) => (
-            <Rect
-              key={i}
-              index={i}
-              data={d}
-              prev={cache.current}
-              next={data.current}
-              x={x}
-              y={y}
-              top={props.top}
-              bottom={props.bottom}
-              height={props.height}
-              sort={sort}
-            />
-          ))}
+          <Spring native reset from={{ t: 0 }} to={{ t: 1 }}>
+            {animatedProps =>
+              props.data.map((d, i) => (
+                <Rect
+                  key={i}
+                  index={i}
+                  data={d}
+                  prev={cache.current}
+                  next={data.current}
+                  x={x}
+                  y={y}
+                  top={props.top}
+                  bottom={props.bottom}
+                  height={props.height}
+                  animatedProps={animatedProps}
+                  sort={sort}
+                />
+              ))
+            }
+          </Spring>
         </g>
       </svg>
     </>
