@@ -131,7 +131,7 @@ const Bar = props => {
         <button
             className="toggle-button"
             onClick={() => {
-            setSort(!sort);
+              setSort(!sort);
             }}
         >
             Toggle Sort

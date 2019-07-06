@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import './styles.css';
 import PieChartPage from './pages/PieChartPage';
 import BarChartPage from './pages/BarChartPage';
+import ChordPage from './pages/ChordPage';
 
 function App() {
 
@@ -26,11 +27,17 @@ function App() {
                       <p className="nav_header">Bar Chart</p>
                   </Link>
               </li>
+              <li>
+                  <Link to={"/chordchart"}>
+                      <p className="nav_header">Chord Chart</p>
+                  </Link>
+              </li>
           </ul>
       </div>
         <Switch>
           <Route exact path="/" component={PieChartPage} />
           <Route path="/barchart" component={BarChartPage} />
+          <Route path="/chordchart" component={ChordPage} />
         </Switch>
     </Router>
   );
