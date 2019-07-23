@@ -10,7 +10,7 @@ export default function Header() {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 1500px)");
+    const mediaQuery = window.matchMedia("(max-width: 100vw)");
     mediaQuery.addListener(handleMediaQueryChange);
     handleMediaQueryChange(mediaQuery);
 
