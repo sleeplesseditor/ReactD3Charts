@@ -62,6 +62,13 @@ export default function Header() {
             >
                 Chord Chart
             </Link>
+            <Link 
+                to={"/areachart"}
+                style={{ textDecoration: 'none' }}
+                onClick={toggleNav}
+            >
+                Area Chart
+            </Link>
         </nav>
       </CSSTransition>
       <button onClick={toggleNav} className="header-button">
